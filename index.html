@@ -1,9 +1,122 @@
 <html>
+    <meta charset="utf-8">
     <head>
         <title>My Widget</title>
     </head>
+    <style>
+        #widget {
+           width: 400px; 
+           box-sizing: border-box;
+           font-family: sans-serif;
+           color: #2A4480;
+        }
+        .block {
+            border: 5px solid #2A4480;
+            border-radius: 30px;
+            box-sizing: border-box;
+        }
+        .switch {
+            width: 50%;
+            height: 30px;
+            box-sizing: border-box;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .header {
+            width: 100%;
+            border: 5px solid #2A4480;
+            background-color: #2A4480;
+            border-radius: 30px;
+            display: flex;
+            box-sizing: border-box;
+        }
+
+        .on {
+            border-color: white;
+            background-color: white;
+            color: #2A4480;
+        }
+
+        .info {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            font-size: 40px;
+        }
+
+        .temp {
+            margin: 10px;
+        }
+    </style>
+
     <body>
-        <h3>This is cool widget</h3>
-        <p>Lorem ipsum</p>
+        <div id="widget" class="block">
+            <div class="header">
+                <div class="block switch" id="switch_nsk">Новосибирск</div>
+                <div class="block switch on" id="switch_moscow">Москва</div>
+            </div>
+            <div class="info">
+                <p class="temp" id="temp_value">&#8987;</p>
+            </div>
+        </div>
     </body>
 </html>
+<script>
+    window.addEventListener("load", function() {
+        loadWheather("Москва")
+    })
+
+    document.getElementById("switch_nsk").addEventListener("click", function() {
+        document.getElementById("temp_value").innerHTML = "&#8987;"
+        
+
+        document.getElementById("switch_moscow").classList.remove("on")
+        document.getElementById("switch_nsk").classList.add("on")
+        loadWheather("Новосибирск")
+    })
+
+    document.getElementById("switch_moscow").addEventListener("click", function() {
+        document.getElementById("temp_value").innerHTML = "&#8987;"
+
+        document.getElementById("switch_nsk").classList.remove("on")
+        document.getElementById("switch_moscow").classList.add("on")
+        loadWheather("Москва")
+    })
+
+    function loadWheather(city) {
+        request_url = "https://api.openweathermap.org/data/2.5/weather?q=" + city + "&appid=0628165876d7ca1c64688f58bf53ece4&units=metric"
+
+        console.log(request_url)
+
+        ajax = new XMLHttpRequest()
+        ajax.onreadystatechange = function() {
+            if (this.readyState != 4) {
+                return
+            }
+
+            if (this.status != 200) {
+                print("&#9785;")
+            }
+
+            showWheather(this.responseText)
+        }
+
+        ajax.open("GET", request_url, true)
+        ajax.send()
+    }
+
+    function showWheather(response) {
+        info = JSON.parse(response)
+        
+        temp = Math.round(info.main.temp)
+
+        document.getElementById("temp_value").innerText = "" + temp + "°C"
+    }
+
+    function print(message) {
+        document.getElementById("temp_value").innerHTML = message
+    }
+</script>
